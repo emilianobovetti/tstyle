@@ -233,7 +233,7 @@ function toggle_environment {
     eval "$environment_var=$(not ${!environment_var})"
 }
 
-environment="${environment}${reset}"
+environment="${reset}${environment}"
 output="${output}${environment}"
 
 for (( index=0; index < ${#input}; index++ )); do
