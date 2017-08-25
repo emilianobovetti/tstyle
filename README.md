@@ -35,8 +35,15 @@ Usage
 
 ![tstyle-help](https://user-images.githubusercontent.com/3957026/29706671-f0f35a3a-8982-11e7-876f-637813a89180.png)
 
-By default *tstyle* will print its argument without a trailing `\n`, you can use the `-n` option or add it to the input `tstyle "hello, *world*\n"`.
+By default *tstyle* will print its argument without a trailing `\n`, you can use the `-n` option or add it to the input: `tstyle "hello, *world*\n"`.
 
 Of course special characters can be escaped so `tstyle "hello, \*world\*"` will print `hello, *world*`.
 
-The `-b <color>` and `f <color>` will add a background and foreground color for the entire output, so multiple colors means multiple *tstyle* calls.
+The `-b <color>` and `-f <color>` will add a background and foreground color for the entire output, so multiple colors means multiple *tstyle* calls.
+
+Exit Status
+-----------
+
+Normal execution will terminate with `0` exit code, the same of `printf` which is called to print the output.
+If the parameter of `-b` or `-f` options is an invalid color or is missing, the script will print an error message to *stderr* and terminate with `1` status code.
+If the script is called with invalid parameters the help message will be printed to *stderr* and the exit status will be `64`.

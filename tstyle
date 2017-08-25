@@ -7,10 +7,10 @@ underline="$(tput smul)"
 reverse="$(tput rev)"
 dim="$(tput dim)"
 
-environment="$reset"
 input=""
 output=""
 trailing=""
+environment=""
 
 function usage {
     local program_name="$(basename $0)"
@@ -135,7 +135,7 @@ function parse_color {
     elif parsed_input=$(parse_color_name "$input"); then
         printf "$parsed_input"
     else
-        return 2
+        return 1
     fi
 
     return 0
@@ -155,7 +155,7 @@ function set_color {
         echo "$(tput setaf 1)${input_color}${reset} is not a valid color" 1>&2
     fi
 
-    return 2
+    return 1
 }
 
 function parse_input_argument {
@@ -233,6 +233,7 @@ function toggle_environment {
     eval "$environment_var=$(not ${!environment_var})"
 }
 
+environment="${environment}${reset}"
 output="${output}${environment}"
 
 for (( index=0; index < ${#input}; index++ )); do
