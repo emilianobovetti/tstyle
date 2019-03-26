@@ -1,16 +1,17 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-reset="$(tput sgr0)"
-italic="$(tput sitm)"
-bold="$(tput bold)"
-underline="$(tput smul)"
-reverse="$(tput rev)"
-dim="$(tput dim)"
+reset=$'\E(B\E[m'
+italic=$'\E[3m'
+bold=$'\E[1m'
+underline=$'\E[4m'
+reverse=$'\E[7m'
+dim=$'\E[2m'
 
-input=""
-output=""
-trailing=""
-environment=""
+input=
+output=
+trailing=
+environment=
+trailing_newline=true
 
 function usage {
     local program_name="$(basename $0)"
@@ -48,13 +49,13 @@ function usage {
     echo   "  2. Double **asterisks** in bold"
     echo   "  3. Single _underscores_ in underline"
     echo   "  4. Double __underscores__ in reverse mode"
-    echo   "  5. Single :colons: in half-bright mode"
+    echo   "  5. Single ^caret^ in half-bright mode"
     echo
     echo   " ${b}${u}Options${n}"
     echo
     echo   "  -b, --background <${i}color${n}>  set a background color for the entire output"
     echo   "  -f, --foreground <${i}color${n}>  set a foreground color"
-    echo   "  -n, --newline             add a newline at the end of output"
+    echo   "  -n, --no-newline          do not print trailing newline"
     echo   "  -h, --help                print this help"
     echo   "      --colors              print all color codes"
     echo
@@ -73,7 +74,7 @@ function usage {
     echo
 }
 
-function print_colors {
+function print-colors {
     for code in {0..255}; do
 
         [ $(expr $code % 4) -eq 0 ] && echo
@@ -92,7 +93,7 @@ function print_colors {
     echo
 }
 
-function parse_color_name {
+function parse-color-name {
     local name="$1"
 
     case "$name" in
@@ -120,19 +121,19 @@ function parse_color_name {
     return 0
 }
 
-function valid_color_code {
+function valid-color-code {
     printf -v code "%d" "$1" 2>/dev/null
 
     [ "$1" = "$code" ] && [ $code -ge 0 ] && [ $code -le 255 ]
 }
 
-function parse_color {
+function parse-color {
     local input="$1"
     local parsed_input
 
-    if valid_color_code "$input"; then
+    if valid-color-code "$input"; then
         printf "$input"
-    elif parsed_input=$(parse_color_name "$input"); then
+    elif parsed_input=$(parse-color-name "$input"); then
         printf "$parsed_input"
     else
         return 1
@@ -141,12 +142,12 @@ function parse_color {
     return 0
 }
 
-function set_color {
+function set-color {
     local tput_param="$1"
     local input_color="$2"
     local color_code
 
-    if color_code=$(parse_color "$input_color"); then
+    if color_code=$(parse-color "$input_color"); then
         environment="${environment}$(tput "$tput_param" "$color_code")"
         return 0
     elif [ -z "$input_color" ]; then
@@ -158,7 +159,7 @@ function set_color {
     return 1
 }
 
-function parse_input_argument {
+function parse-input-argument {
     if [ -z "$input" ]; then
         input="$1"
 
@@ -174,26 +175,26 @@ function parse_input_argument {
 while [ $# -gt 0 ]; do
     case "$1" in
         -b|--background)
-            set_color setab "$2" || exit $?
+            set-color setab "$2" || exit $?
             shift
             ;;
         -f|--foreground)
-            set_color setaf "$2" || exit $?
+            set-color setaf "$2" || exit $?
             shift
             ;;
-        -n|--newline)
-            trailing="${trailing}\n"
+        -n|--no-newline)
+            trailing_newline=false
             ;;
         -h|--help)
             usage
             exit 0
             ;;
         --colors)
-            print_colors
+            print-colors
             exit 0
             ;;
         *)
-            parse_input_argument "$1" || exit $?
+            parse-input-argument "$1" || exit $?
             ;;
     esac
 
@@ -208,22 +209,18 @@ single_asterisk=false    # italic $(tput sitm)
 double_asterisk=false    # bold $(tput bold)
 single_underscore=false  # underline $(tput smul)
 double_underscore=false  # reverse $(tput rev)
-single_colon=false       # half-bright $(tput dim)
+single_caret=false       # half-bright $(tput dim)
 
 function not {
-    if "$1"; then
-        printf false
-    else
-        printf true
-    fi
+    $1 && printf false || printf true
 }
 
-function toggle_environment {
+function toggle-environment {
     local environment_var="$1"
     local special_char="$2"
 
     if "${!environment_var}"; then
-        environment="${environment//$special_char}"
+        environment="${reset}${environment//$special_char}"
     else
         environment="${environment}${special_char}"
     fi
@@ -233,35 +230,36 @@ function toggle_environment {
     eval "$environment_var=$(not ${!environment_var})"
 }
 
-environment="${reset}${environment}"
 output="${output}${environment}"
 
 for (( index=0; index < ${#input}; index++ )); do
-    next_index=$((index + 1))
+    next_index=$((index+1))
     current="${input:$index:1}"
     next="${input:$next_index:1}"
 
-    if [ "$current" = "\\" ] && [[ "$next" =~ [*_:] ]]; then
+    if [ "$current" = "\\" ] && [[ "$next" =~ [*_^] ]]; then
         output="${output}${next}"
 
         index=$next_index
     elif [ "$current" = "*" ] && [ "$next" = "*" ]; then
-        toggle_environment double_asterisk "$bold"
+        toggle-environment double_asterisk "$bold"
 
         index=$next_index
     elif [ "$current" = "_" ] && [ "$next" = "_" ]; then
-        toggle_environment double_underscore "$reverse"
+        toggle-environment double_underscore "$reverse"
 
         index=$next_index
     elif [ "$current" = "*" ]; then
-        toggle_environment single_asterisk "$italic"
+        toggle-environment single_asterisk "$italic"
     elif [ "$current" = "_" ]; then
-        toggle_environment single_underscore "$underline"
-    elif [ "$current" = ":" ]; then
-        toggle_environment single_colon "$dim"
+        toggle-environment single_underscore "$underline"
+    elif [ "$current" = "^" ]; then
+        toggle-environment single_caret "$dim"
     else
         output="${output}${current}"
     fi
 done
+
+$trailing_newline && trailing="${trailing}\n"
 
 printf "${output}${reset}${trailing}"

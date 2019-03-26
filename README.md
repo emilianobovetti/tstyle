@@ -13,18 +13,18 @@ Example
 *tstyle* can get its input as an argument:
 
 ```bash
-tstyle -n -f red "A *tout* le _monde_"
+tstyle -f red "A *tout* le _monde_"
 ```
 
 or from *stdin* if the argument is missing, so the following is also accepted:
 
 ```bash
-echo "A *tout* le _monde_" | tstyle -n -f red
+echo "A *tout* le _monde_" | tstyle -f red
 ```
 
 and both lead to the same result:
 
-![tstyle-basic-example](https://user-images.githubusercontent.com/3957026/29706669-ee06da0e-8982-11e7-9eb5-74726575985e.png)
+![tstyle-basic-example](https://user-images.githubusercontent.com/3957026/54991123-91cba880-4fbc-11e9-9f63-64c598de6e36.png)
 
 Note that if both *stdin* and argument are provided, *tstyle* will ignore *stdin*.
 
@@ -33,9 +33,9 @@ Usage
 
 `-h` or `--help` will give you a complete usage instructions:
 
-![tstyle-help](https://user-images.githubusercontent.com/3957026/29706671-f0f35a3a-8982-11e7-876f-637813a89180.png)
+![tstyle-help](https://user-images.githubusercontent.com/3957026/54990775-d0ad2e80-4fbb-11e9-9a0d-dabc9bc80680.png)
 
-By default *tstyle* will print its argument without a trailing `\n`, you can use the `-n` option or add it to the input: `tstyle "hello, *world*\n"`.
+By default *tstyle* will print its argument with a trailing `\n`, you can use the `-n` option to avoid this behavior.
 
 Of course special characters can be escaped so `tstyle "hello, \*world\*"` will print `hello, *world*`.
 
