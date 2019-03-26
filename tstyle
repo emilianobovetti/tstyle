@@ -85,7 +85,7 @@ function print-colors {
             printf " "
         fi
 
-        printf " ${code}:"              # print number
+        printf " $code:"              # print number
         printf "$(tput setab $code)   " # set the background and print
         printf "$reset"                 # reset
     done
@@ -94,9 +94,7 @@ function print-colors {
 }
 
 function parse-color-name {
-    local name="$1"
-
-    case "$name" in
+    case "$1" in
         black)   printf 0 ;;
         red)     printf 1 ;;
         green)   printf 2 ;;
@@ -175,11 +173,11 @@ function parse-input-argument {
 while [ $# -gt 0 ]; do
     case "$1" in
         -b|--background)
-            set-color setab "$2" || exit $?
+            set-color setab "${2:-}" || exit $?
             shift
             ;;
         -f|--foreground)
-            set-color setaf "$2" || exit $?
+            set-color setaf "${2:-}" || exit $?
             shift
             ;;
         -n|--no-newline)
@@ -220,12 +218,12 @@ function toggle-environment {
     local special_char="$2"
 
     if "${!environment_var}"; then
-        environment="${reset}${environment//$special_char}"
+        environment="${environment//$special_char}"
+        output="${output}${reset}${environment}"
     else
         environment="${environment}${special_char}"
+        output="${output}${special_char}"
     fi
-
-    output="${output}${environment}"
 
     eval "$environment_var=$(not ${!environment_var})"
 }
