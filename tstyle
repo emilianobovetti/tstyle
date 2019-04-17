@@ -14,70 +14,94 @@ environment=
 trailing_newline=true
 
 function usage {
-    local program_name="$(basename $0)"
+    local program_name
 
-    local n="$reset"
-    local i="$italic"
-    local b="$bold"
-    local u="$underline"
-    local r="$reverse"
-    local d="$dim"
+    local n
+    local i
+    local b
+    local u
+    local d
 
-    local c_0=$(tput setaf 0)
-    local c_1=$(tput setaf 1)
-    local c_2=$(tput setaf 2)
-    local c_3=$(tput setaf 3)
-    local c_4=$(tput setaf 4)
-    local c_5=$(tput setaf 5)
-    local c_6=$(tput setaf 6)
-    local c_7=$(tput setaf 7)
-    local c_8=$(tput setaf 8)
-    local c_9=$(tput setaf 9)
-    local c_10=$(tput setaf 10)
-    local c_11=$(tput setaf 11)
-    local c_12=$(tput setaf 12)
-    local c_13=$(tput setaf 13)
-    local c_14=$(tput setaf 14)
-    local c_15=$(tput setaf 15)
+    local c_0
+    local c_1
+    local c_2
+    local c_3
+    local c_4
+    local c_5
+    local c_6
+    local c_7
+    local c_8
+    local c_9
+    local c_10
+    local c_11
+    local c_12
+    local c_13
+    local c_14
+    local c_15
 
-    echo   "Usage:"
-    echo   "  $program_name [-b <${i}color${n}>] [-f <${i}color${n}>] [-n] [${i}argument${n}]"
+    program_name="$(basename "$0")"
+
+    n="$reset"
+    i="$italic"
+    b="$bold"
+    u="$underline"
+    d="$dim"
+
+    c_0=$(tput setaf 0)
+    c_1=$(tput setaf 1)
+    c_2=$(tput setaf 2)
+    c_3=$(tput setaf 3)
+    c_4=$(tput setaf 4)
+    c_5=$(tput setaf 5)
+    c_6=$(tput setaf 6)
+    c_7=$(tput setaf 7)
+    c_8=$(tput setaf 8)
+    c_9=$(tput setaf 9)
+    c_10=$(tput setaf 10)
+    c_11=$(tput setaf 11)
+    c_12=$(tput setaf 12)
+    c_13=$(tput setaf 13)
+    c_14=$(tput setaf 14)
+    c_15=$(tput setaf 15)
+
+    echo    "Usage:"
+    echo    "  $program_name [-b <${i}color${n}>] [-f <${i}color${n}>] [-n] [${i}argument${n}]"
     echo
-    printf "Formats and prints ${i}argument${n} if present, ${i}stdin${n} otherwise. "
-    echo   "Formatting rules:"
-    echo   "  1. Text surrounded by single *asterisks* will be rendered in italic"
-    echo   "  2. Double **asterisks** in bold"
-    echo   "  3. Single _underscores_ in underline"
-    echo   "  4. Double __underscores__ in reverse mode"
-    echo   "  5. Single ^caret^ in half-bright mode"
+    echo -n "Formats and prints ${i}argument${n} if present, ${i}stdin${n} otherwise. "
+    echo    "Formatting rules:"
+    echo    "  1. Text surrounded by single *asterisks* will be rendered in italic"
+    echo    "  2. Double **asterisks** in bold"
+    echo    "  3. Single _underscores_ in underline"
+    echo    "  4. Double __underscores__ in reverse mode"
+    echo    "  5. Single ^caret^ in half-bright mode"
     echo
-    echo   " ${b}${u}Options${n}"
+    echo    " ${b}${u}Options${n}"
     echo
-    echo   "  -b, --background <${i}color${n}>  set a background color for the entire output"
-    echo   "  -f, --foreground <${i}color${n}>  set a foreground color"
-    echo   "  -n, --no-newline          do not print trailing newline"
-    echo   "  -h, --help                print this help"
-    echo   "      --colors              print all color codes"
+    echo    "  -b, --background <${i}color${n}>  set a background color for the entire output"
+    echo    "  -f, --foreground <${i}color${n}>  set a foreground color"
+    echo    "  -n, --no-newline          do not print trailing newline"
+    echo    "  -h, --help                print this help"
+    echo    "      --colors              print all color codes"
     echo
-    echo   " ${b}${u}Colors${n}"
+    echo    " ${b}${u}Colors${n}"
     echo
-    echo   "The following colors can be used through their names or codes. "
-    printf "Additionally numbers from 16 to 255 are accepted. "
-    echo   "Run ${d}$program_name --colors${n} to see all codes."
-    echo   "  0:  ${c_0}■${n} black  1:  ${c_1}■${n} red   2:  ${c_2}■${n} green"
-    echo   "  3:  ${c_3}■${n} yellow 4:  ${c_4}■${n} blue  5:  ${c_5}■${n} magenta"
-    echo   "  6:  ${c_6}■${n} cyan   7:  ${c_7}■${n} white "
+    echo    "The following colors can be used through their names or codes. "
+    echo -n "Additionally numbers from 16 to 255 are accepted. "
+    echo    "Run ${d}$program_name --colors${n} to see all codes."
+    echo    "  0:  ${c_0}■${n} black  1:  ${c_1}■${n} red   2:  ${c_2}■${n} green"
+    echo    "  3:  ${c_3}■${n} yellow 4:  ${c_4}■${n} blue  5:  ${c_5}■${n} magenta"
+    echo    "  6:  ${c_6}■${n} cyan   7:  ${c_7}■${n} white "
     echo
-    echo   "  8:  ${c_8}■${n} Black  9:  ${c_9}■${n} Red   10: ${c_10}■${n} Green"
-    echo   "  11: ${c_11}■${n} Yellow 12: ${c_12}■${n} Blue  13: ${c_13}■${n} Magenta"
-    echo   "  14: ${c_14}■${n} Cyan   15: ${c_15}■${n} White"
+    echo    "  8:  ${c_8}■${n} Black  9:  ${c_9}■${n} Red   10: ${c_10}■${n} Green"
+    echo    "  11: ${c_11}■${n} Yellow 12: ${c_12}■${n} Blue  13: ${c_13}■${n} Magenta"
+    echo    "  14: ${c_14}■${n} Cyan   15: ${c_15}■${n} White"
     echo
 }
 
 function print-colors {
     for code in {0..255}; do
 
-        [ $(expr $code % 4) -eq 0 ] && echo
+        [ "$(( code % 4 ))" -eq 0 ] && echo
 
         if [ $code -lt 10 ]; then
             printf "  "
@@ -85,9 +109,9 @@ function print-colors {
             printf " "
         fi
 
-        printf " $code:"              # print number
-        printf "$(tput setab $code)   " # set the background and print
-        printf "$reset"                 # reset
+        printf " %s:" "$code"                # print number
+        printf "%s" "$(tput setab $code)   " # set the background and print
+        printf "%s" "$reset"                 # reset
     done
 
     echo
@@ -122,7 +146,7 @@ function parse-color-name {
 function valid-color-code {
     printf -v code "%d" "$1" 2>/dev/null
 
-    [ "$1" = "$code" ] && [ $code -ge 0 ] && [ $code -le 255 ]
+    [ "$1" = "$code" ] && [ "$code" -ge 0 ] && [ "$code" -le 255 ]
 }
 
 function parse-color {
@@ -130,9 +154,9 @@ function parse-color {
     local parsed_input
 
     if valid-color-code "$input"; then
-        printf "$input"
+        printf "%s" "$input"
     elif parsed_input=$(parse-color-name "$input"); then
-        printf "$parsed_input"
+        printf "%s" "$parsed_input"
     else
         return 1
     fi
@@ -196,17 +220,20 @@ while [ $# -gt 0 ]; do
             ;;
     esac
 
-    shift
+    shift ||:
 done
 
-if [ -z "$input" ]; then
-    input="$(cat /dev/stdin)"
-fi
+[ -z "$input" ] && input=$(cat)
 
+# shellcheck disable=SC2034
 single_asterisk=false    # italic $(tput sitm)
+# shellcheck disable=SC2034
 double_asterisk=false    # bold $(tput bold)
+# shellcheck disable=SC2034
 single_underscore=false  # underline $(tput smul)
+# shellcheck disable=SC2034
 double_underscore=false  # reverse $(tput rev)
+# shellcheck disable=SC2034
 single_caret=false       # half-bright $(tput dim)
 
 function not {
@@ -225,12 +252,13 @@ function toggle-environment {
         output="${output}${special_char}"
     fi
 
-    eval "$environment_var=$(not ${!environment_var})"
+    eval "$environment_var=$(not "${!environment_var}")"
 }
 
 output="${output}${environment}"
+length=${#input}
 
-for (( index=0; index < ${#input}; index++ )); do
+for (( index=0; index < length; index++ )); do
     next_index=$((index+1))
     current="${input:$index:1}"
     next="${input:$next_index:1}"
@@ -260,4 +288,4 @@ done
 
 $trailing_newline && trailing="${trailing}\n"
 
-printf "${output}${reset}${trailing}"
+printf "%b%b%b" "$output" "$reset" "$trailing"
