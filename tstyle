@@ -286,6 +286,6 @@ for (( index=0; index < length; index++ )); do
     fi
 done
 
-$trailing_newline && trailing="${trailing}\n"
+$trailing_newline && trailing="${trailing}\\n"
 
 printf "%b%b%b" "$output" "$reset" "$trailing"
